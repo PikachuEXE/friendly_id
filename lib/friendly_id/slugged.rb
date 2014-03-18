@@ -289,11 +289,14 @@ Github issue](https://github.com/norman/friendly_id/issues/185) for discussion.
 
     # Sets the slug.
     def set_slug(normalized_slug = nil)
+      base_column_value = send(friendly_id_config.base)
       if should_generate_new_friendly_id?
-        candidates = FriendlyId::Candidates.new(self, normalized_slug || send(friendly_id_config.base))
-        slug = slug_generator.generate(candidates) || resolve_friendly_id_conflict(candidates)
-        send "#{friendly_id_config.slug_column}=", slug
+        candidates = FriendlyId::Candidates.new(self, normalized_slug || base_column_value)
+        new_slug = slug_generator.generate(candidates) || resolve_friendly_id_conflict(candidates)
+
+        send("#{friendly_id_config.slug_column}=", new_slug)
       end
+      send("#{friendly_id_config.slug_column}=", nil) if base_column_value.blank?
     end
     private :set_slug
 
