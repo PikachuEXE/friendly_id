@@ -51,6 +51,14 @@ module FriendlyId
           end
         end
 
+        test "should set slug to nil if base_column(name) is blank after validation" do
+          with_instance_of model_class do |record|
+            record.name = nil
+            record.valid? # run validation
+            assert_nil record.slug
+          end
+        end
+
         test "should set the slug to nil on dup" do
           with_instance_of model_class do |record|
             record2 = record.dup
